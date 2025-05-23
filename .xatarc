@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Deus-lo-Vult-s-workspace-tl4i5q.us-east-1.xata.sh/db/jsm_snapcast",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
