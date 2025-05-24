@@ -11,12 +11,7 @@ export const BUNNY = {
 
 export const emojis = ["😂", "😍", "👍"];
 
-export const filterOptions = [
-  "Most Viewed",
-  "Most Recent",
-  "Oldest First",
-  "Least Viewed",
-];
+export const filterOptions = ["Most Viewed", "Most Recent", "Oldest First", "Least Viewed"];
 
 export const visibilities: Visibility[] = ["public", "private"];
 
