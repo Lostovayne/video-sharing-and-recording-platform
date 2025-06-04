@@ -1,3 +1,5 @@
+"use client"
+
 import FileInput from "@/components/FileInput";
 import FormField from "@/components/FormField";
 import { ChangeEvent, useState } from "react";
