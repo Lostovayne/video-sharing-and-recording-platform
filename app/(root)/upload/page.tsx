@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import FileInput from "@/components/FileInput";
 import FormField from "@/components/FormField";
