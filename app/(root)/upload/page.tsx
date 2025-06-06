@@ -18,10 +18,15 @@ const UploadPage = () => {
     visibility: "public",
   });
 
+  const video = {};
+  const thumbnail = {};
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleVideoChange = (e: ChangeEvent<HTMLInputElement>) => {};
 
   return (
     <div className="wrapper-md upload-page">
@@ -44,8 +49,29 @@ const UploadPage = () => {
           placeholder="Describe what this video is about"
           as="textarea"
         />
-        <FileInput />
-        <FileInput />
+        <FileInput
+          id="video"
+          label="Video"
+          accept="video/*"
+          file={video.file}
+          previewUrl={video.previewUrl}
+          inputRef={video.inputRef}
+          onChange={handleVideoChange}
+          onReset={video.resetFile}
+          type="video"
+        />
+
+        <FileInput
+          id="thumbnail"
+          label="Thumbnail"
+          accept="image/*"
+          file={thumbnail.file}
+          previewUrl={thumbnail.previewUrl}
+          inputRef={thumbnail.inputRef}
+          onChange={handleVideoChange}
+          onReset={thumbnail.resetFile}
+          type="image"
+        />
 
         <FormField
           id="visibility"
