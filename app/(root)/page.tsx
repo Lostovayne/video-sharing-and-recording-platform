@@ -12,6 +12,7 @@ const Page = () => {
           <VideoCard key={card.id} {...card} />
         ))}
       </section>
+      
     </main>
   );
 };
