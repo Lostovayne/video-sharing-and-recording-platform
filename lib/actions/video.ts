@@ -1,6 +1,9 @@
 "use server";
 
 import { BUNNY } from "@/constants";
+import { db } from "@/drizzle/db";
+import { videos } from "@/drizzle/schema";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "../auth";
 import { apiFetch, getEnv, withErrorHandling } from "../utils";
@@ -24,15 +27,24 @@ const getSessionUserId = async (): Promise<string> => {
   return session.user.id;
 };
 
+const revalidatePaths = (paths: string[]) => {
+  paths.forEach((path) => {
+    revalidatePath(path);
+  });
+};
+
 // Server Actions
 export const getVideoUploadUrl = withErrorHandling(async () => {
   await getSessionUserId();
 
-  const videoResponse = await apiFetch(`${VIDEO_STREAM_BASE_URL}/ ${BUNNY_LIBRARY_ID}/videos`, {
-    method: "POST",
-    bunnyType: "stream",
-    body: { title: "Temporary Title", collectionId: "" },
-  });
+  const videoResponse = await apiFetch<BunnyVideoResponse>(
+    `${VIDEO_STREAM_BASE_URL}/ ${BUNNY_LIBRARY_ID}/videos`,
+    {
+      method: "POST",
+      bunnyType: "stream",
+      body: { title: "Temporary Title", collectionId: "" },
+    }
+  );
 
   const uploadUrl = `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoResponse.guid}`;
 
@@ -58,17 +70,29 @@ export const getThumbnailUploadUrl = withErrorHandling(async (videoId: string) =
 export const saveVideoDetails = withErrorHandling(async (videoDetails: VideoDetails) => {
   const userId = await getSessionUserId();
 
-  const video = await apiFetch(
-    `${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoDetails.videoId}`,
-    {
-      method: "POST",
-      bunnyType: "stream",
-      body: {
-        title: videoDetails.title,
-        description: videoDetails.description,
-      },
-    }
-  );
+  await apiFetch(`${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoDetails.videoId}`, {
+    method: "POST",
+    bunnyType: "stream",
+    body: {
+      title: videoDetails.title,
+      description: videoDetails.description,
+    },
+  });
 
-  // await db.insert(videos).values({})
+  await db.insert(videos).values({
+    videoId: videoDetails.videoId,
+    title: videoDetails.title,
+    description: videoDetails.description,
+    duration: videoDetails.duration,
+    thumbnailUrl: videoDetails.thumbnailUrl,
+    visibility: videoDetails.visibility as "public" | "private",
+    videoUrl: `${BUNNY.EMBED_URL}/${BUNNY_LIBRARY_ID}/${videoDetails.videoId}`,
+    userId: userId,
+    views: 0, // Default value
+  });
+
+  // Revalidate path after video is saved
+  revalidatePaths(["/"]);
+
+  return { videoId: videoDetails.videoId };
 });

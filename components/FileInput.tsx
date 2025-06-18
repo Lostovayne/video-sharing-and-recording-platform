@@ -1,6 +1,18 @@
 import Image from "next/image";
 
-const FileInput = ({ id, label, accept, file, previewUrl, inputRef, onChange, onReset, type }: FileInputProps) => {
+const FileInput = ({
+  id,
+  label,
+  accept,
+  file,
+  previewUrl,
+  inputRef,
+  onChange,
+  onReset,
+  type,
+}: FileInputProps) => {
+  console.log("previewUrl", previewUrl);
+
   return (
     <section className="file-input">
       <label htmlFor={id}>{label}</label>
@@ -14,15 +26,12 @@ const FileInput = ({ id, label, accept, file, previewUrl, inputRef, onChange, on
       ) : (
         <div>
           {type === "video" ? (
-            <video controls>
-              <source src={previewUrl} type="video/mp4" />
-            </video>
+            <video src={previewUrl} controls />
           ) : (
             <Image src={previewUrl} alt="thumbnail img" fill />
           )}
           <button type="button" onClick={onReset}>
-            <Image src={"/assets/icons/close.svg"} alt="reset" width={16} height={16} />
-            <p>{file?.name}</p>
+            <Image src="/assets/icons/close.svg" alt="reset" width={16} height={16} />
           </button>
         </div>
       )}
